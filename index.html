@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backend test</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <p class="heading">All events:</p>
+    <div class="date-picker">
+      <p class="previous-month">←</p>
+      <p class="date"></p>
+      <p class="next-month">→</p>
+    </div>
+    <div class="events-container"></div>
+    <div class="add-event">
+      <input type="text" class="input-title" placeholder="Event title" />
+      <input type="date" class="input-date" name="date" placeholder="Date" />
+      <input
+        type="time"
+        class="input-start"
+        name="start_time"
+        placeholder="Start time"
+      />
+      <input
+        type="time"
+        class="input-end"
+        name="end_time"
+        placeholder="End time"
+      />
+      <input
+        type="text"
+        class="input-location"
+        name="location"
+        placeholder="Location"
+      />
+      <button class="add-event-btn">Add event</button>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
