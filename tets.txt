@@ -1,0 +1,20 @@
+Original file name: “The.Office.US.S02E08.1080p.AMZN.WEB.x264-MRSK.mkv”
+"Tidied" file name: “The Office US S02E08 1080p.mkv”
+
+Original file name: “Arrival.2016.1080p.BluRay.x264-[YTS.AG].mp4”
+"Tidied" file name: “Arrival 2016 1080p BluRay.mp4”
+
+Original file name: “Unit-02---2024-january---PH-International-Removals---Exam-Sample---MS”
+"Tidied" file name: “Unit 02 2024 January PH International Removals Exam Sample.docx”
+
+Original file name: “vlc-3.0.20-arm64.dmg”
+"Tidied" file name: “VLC 3.0.20 ARM64.dmg”
+
+Original file name: “436412621-Edexcel-as-and-a-Level-Mathematics-Statistics-and-Mechanics-Year-1-AS-PDFDrive-com.pdf”
+"Tidied" file name: “Edexcel A-Level Mathematics Statistics and Mechanics Year 1 AS.pdf”
+
+Original file name: “HRB ABSENT P1 MONDAY ; WORK TO DO ON MONDAY 27Nov.zip”
+"Tidied" file name: “HRB Absent P1 Monday; Work to do on Monday 27th Nov.zip”
+
+Original file name: “Can_You_Really_Delete_Your_Internet_History (1)_transcription.txt”
+"Tidied" file name: “Can You Really Delete Your Internet History - Transcription.txt”
