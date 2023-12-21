@@ -171,10 +171,10 @@ addEventButton.addEventListener("click", function () {
 
   newEvents.push(eventToPost);
   console.log(eventToPost);
-  setTimeout(() => {
-    console.log(extractedMonth, extractedYear);
-    postEvent(eventToPost, extractedYear, extractedMonth);
-  }, 500);
+
+  console.log(extractedMonth, extractedYear);
+  postEvent(eventToPost, extractedYear, extractedMonth);
 
   console.log(newEvents);
+  fetchEvents(extractedYear, extractedMonth);
 });
