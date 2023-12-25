@@ -41,4 +41,27 @@ body {
   flex-direction: column;
   gap: 0.25rem;
   width: 200px;
+}
+
+.individual_event_times {
+  display: flex;
+  gap: 0.25rem;
+}
+.individual_event_times * {
+  font-size: 1rem;
+}
+
+.event__location,
+.event__id,
+.event__user {
+  font-size: 1rem;
+}
+
+.event__title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.event__date {
+  font-size: 1.25rem;
 }/*# sourceMappingURL=index.css.map */

@@ -8,26 +8,28 @@ function getFormattedMonth(month) {
 async function fetchEvents(year, month) {
   const formattedMonth = getFormattedMonth(month.toString());
   try {
+    // Assuming backend is modified to return a list of all events for the month
     const response = await fetch(
-      `https://p6kbzyq4s7.execute-api.eu-west-2.amazonaws.com/dev/fetchEvents?year=${year}&month=${formattedMonth}`
+      `https://kaosevxmrvkc2qvjjonfwae4z40bylve.lambda-url.eu-west-2.on.aws/calendarManager?year=${year}&month=${formattedMonth}`
     );
 
     const data = await response.json();
 
-    // Check if the response contains a message indicating no events were found
-    if (data.message && data.message === "No events found for this month") {
+    // Handle the case where no events are found or handle the list of event file names
+    if (!data || data.length === 0) {
       console.log("No events found for this month");
+      // Handle no events found
       createEventDivs(false);
-      return;
+    } else {
+      // Assuming 'data' is an array of events
+      eventsList = data; // Update the UI with these events
+      console.log(eventsList.events);
+      // Update your UI here with the eventsList
+      createEventDivs(eventsList);
     }
-    eventsList = data.events; // Use the 'data' variable here
-    console.log(eventsList);
-    createEventDivs(eventsList);
   } catch (error) {
     console.error("Error:", error);
-    setTimeout(() => {
-      fetchEvents(year, month);
-    }, 10000);
+    // Handle errors, possibly with retry logic or user notification
   }
 }
 
@@ -42,13 +44,21 @@ const createEventDivs = function (eventsFound = true) {
     return;
   }
   let count = 0;
-  for (let i = 0; i < eventsList.length; i++) {
-    const eventName = eventsList[i]["name"];
+  for (let i = 0; i < eventsList.events.length; i++) {
+    const eventName = eventsList.events[i]["name"];
     const eventElement = document.createElement("div");
     eventElement.classList.add("event");
     eventElement.innerHTML = `
-            <div class="event__title">${eventName}</div>
-            <div class="event__date">${eventsList[i]["date"]}</div>
+            <div class="individual_event event__title">${eventName}</div>
+            <div class="individual_event event__date">${eventsList.events[i]["date"]}</div>
+            <div class="individual_event_times">
+              <div class="individual_event style_small event__start">${eventsList.events[i]["start_time"]}</div>
+              <div class="individual_event style_small event__end">${eventsList.events[i]["end_time"]}</div>
+            </div>
+            <div class="individual_event event__location">${eventsList.events[i]["location"]}</div>
+            <div class="individual_event event__id">${eventsList.events[i]["eventID"]}</div>
+            <div class="individual_event event__user">User: ${eventsList.events[i]["user"]}</div>
+
         `;
     eventContainer.appendChild(eventElement);
     console.log(eventName);
@@ -117,12 +127,11 @@ const clearEventsScreen = function () {
 async function postEvent(eventData, year, month) {
   try {
     const response = await fetch(
-      `https://hppgptf7otm5ngtj45n2g6vv6a0injlh.lambda-url.eu-west-2.on.aws/fetchEvents?year=${year}&month=${month}`,
+      `https://kaosevxmrvkc2qvjjonfwae4z40bylve.lambda-url.eu-west-2.on.aws/calendarManager?year=${year}&month=${month}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify(eventData),
       }
@@ -131,8 +140,9 @@ async function postEvent(eventData, year, month) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     } else {
-      console.log("Event added successfully");
-      // Handle successful response here
+      const responseData = await response.json();
+      console.log("Event added successfully", responseData);
+      // Use responseData here to get details like the new event ID or confirmation message
     }
   } catch (error) {
     console.error("Error posting event:", error);
@@ -155,6 +165,11 @@ addEventButton.addEventListener("click", function () {
   const dateToPost = document.querySelector(".input-date").value;
   const extractedMonth = dateToPost.slice(5, 7);
   const extractedYear = dateToPost.slice(0, 4);
+  let userToPost = document.querySelector(".input-user").value;
+
+  if (userToPost === "") {
+    userToPost = "Bartek";
+  }
 
   const startTimeToPost = document.querySelector(".input-start").value;
   const endTimeToPost = document.querySelector(".input-end").value;
@@ -166,6 +181,7 @@ addEventButton.addEventListener("click", function () {
     start_time: startTimeToPost,
     end_time: endTimeToPost,
     location: locationToPost,
+    user: userToPost,
     color: generateRandomColors(),
   };
 
