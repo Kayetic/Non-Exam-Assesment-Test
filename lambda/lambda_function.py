@@ -7,7 +7,7 @@ import uuid
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-
+dynamodb = boto3.resource('dynamodb')
 s3_client = boto3.client('s3')
 bucket_name = 'shared-calendar-bucket'
 
@@ -91,16 +91,64 @@ def handle_post_request(event):
     
     # Construct the object key with the unique eventID
     object_key = f'{year}/{month}/{event_id}.json'
-
-    # Save the new event to S3
+    
+    # Attempt to create the event in both S3 and DynamoDB
     try:
+        # Save the new event to S3
         s3_client.put_object(Bucket=bucket_name, Key=object_key, Body=json.dumps(event_body))
+        
+        # Reference to the DynamoDB table
+        table = dynamodb.Table('eventsIndex')
+        
+        # Write the new event to DynamoDB
+        table.put_item(Item={
+            'eventID': event_id,  # Primary Key
+            's3Key': object_key,  # S3 Object Key
+            # Add other event details here as needed
+        })
+
         return {
             'statusCode': 200,
             'body': json.dumps({'message': 'Event created successfully', 'eventID': event_id})
         }
     except ClientError as e:
+        logger.error('ClientError', exc_info=True)
         return {
             'statusCode': 500,
             'body': json.dumps({'message': 'Error creating event', 'error': str(e)})
         }
+    except Exception as e:
+        logger.error('Unhandled exception', exc_info=True)
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': 'An unexpected error occurred', 'error': str(e)})
+        }
+
+        
+        
+def handle_delete_request(event):
+    try:
+        # Extract the eventID from the query string
+        event_id = event['queryStringParameters']['eventID']
+        
+        # Reference to the DynamoDB table
+        table = dynamodb.Table('eventsIndex')
+        
+        # Retrieve the item from DynamoDB
+        response = table.get_item(Key={'eventID': event_id})
+        item = response.get('Item')
+        
+        if not item:
+            return {'statusCode': 404, 'body': json.dumps({'message': 'Event not found'})}
+        
+        # Delete the object in S3
+        s3 = boto3.client('s3')
+        s3.delete_object(Bucket='shared-calendar-bucket', Key=item['s3Key'])
+        
+        # Delete the item from the DynamoDB table
+        table.delete_item(Key={'eventID': event_id})
+        
+        return {'statusCode': 200, 'body': json.dumps({'message': 'Event deleted successfully'})}
+    except Exception as e:
+        return {'statusCode': 500, 'body': json.dumps({'message': 'Error deleting event', 'error': str(e)})}
+
