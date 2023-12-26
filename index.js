@@ -16,15 +16,17 @@ async function fetchEvents(year, month) {
     const data = await response.json();
 
     // Handle the case where no events are found or handle the list of event file names
-    if (!data || data.length === 0) {
+    if (data.events.length === 0) {
       console.log("No events found for this month");
       // Handle no events found
+      clearEventsScreen();
       createEventDivs(false);
     } else {
       // Assuming 'data' is an array of events
       eventsList = data; // Update the UI with these events
       console.log(eventsList.events);
       // Update your UI here with the eventsList
+      clearEventsScreen();
       createEventDivs(eventsList);
     }
   } catch (error) {
@@ -147,6 +149,8 @@ async function postEvent(eventData, year, month) {
   } catch (error) {
     console.error("Error posting event:", error);
   }
+  clearEventsScreen();
+  fetchEvents(selectedYear, selectedMonth);
 }
 
 const generateRandomColors = function () {
