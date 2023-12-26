@@ -50,6 +50,16 @@ const createEventDivs = function (eventsFound = true) {
     const eventName = eventsList.events[i]["name"];
     const eventElement = document.createElement("div");
     eventElement.classList.add("event");
+
+    // Add delete icon element
+    const deleteIcon = document.createElement("span");
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.innerHTML = "🗑️"; // Unicode for trash can
+    deleteIcon.onclick = function () {
+      deleteEvent(eventsList.events[i]["eventID"]); // Call the delete function when icon is clicked
+      fetchEvents(selectedYear, selectedMonth);
+    };
+
     eventElement.innerHTML = `
             <div class="individual_event event__title">${eventName}</div>
             <div class="individual_event event__date">${eventsList.events[i]["date"]}</div>
@@ -62,6 +72,7 @@ const createEventDivs = function (eventsFound = true) {
             <div class="individual_event event__user">User: ${eventsList.events[i]["user"]}</div>
 
         `;
+    eventElement.appendChild(deleteIcon);
     eventContainer.appendChild(eventElement);
     console.log(eventName);
     count++;
@@ -197,4 +208,35 @@ addEventButton.addEventListener("click", function () {
 
   console.log(newEvents);
   fetchEvents(extractedYear, extractedMonth);
+});
+
+async function deleteEvent(eventID) {
+  try {
+    const response = await fetch(
+      `https://kaosevxmrvkc2qvjjonfwae4z40bylve.lambda-url.eu-west-2.on.aws/calendarManager?eventID=${eventID}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } else {
+      const responseData = await response.json();
+      console.log("Event deleted successfully", responseData);
+      // Additional logic to update UI or state as needed
+      // clear the events screen
+      clearEventsScreen();
+      fetchEvents(selectedYear, selectedMonth);
+    }
+  } catch (error) {
+    console.error("Error deleting event:", error);
+  }
+}
+
+const deleteEventButton = document.querySelector(".delete-event-btn");
+deleteEventButton.addEventListener("click", function () {
+  const eventIDToDelete = document.querySelector(".input-delete").value;
+  deleteEvent(eventIDToDelete);
+  fetchEvents(selectedYear, selectedMonth);
 });
