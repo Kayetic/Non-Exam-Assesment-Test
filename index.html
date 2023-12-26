@@ -14,9 +14,20 @@
       <p class="next-month">→</p>
     </div>
     <div class="events-container"></div>
-    <div class="add-event">
+    <div class="add-event" style="display: flex">
       <input type="text" class="input-title" placeholder="Event title" />
-      <input type="date" class="input-date" name="date" placeholder="Date" />
+      <input
+        type="date"
+        class="input-start-date"
+        name="date"
+        placeholder="Start date"
+      />
+      <input
+        type="date"
+        class="input-end-date"
+        name="date"
+        placeholder="End date"
+      />
       <input
         type="time"
         class="input-start"
@@ -43,7 +54,15 @@
       />
       <button class="add-event-btn">Add event</button>
     </div>
-    <div class="delete-event">
+    <div
+      class="delete-event"
+      style="
+        display: flex;
+        flex-direction: column;
+        width: 16rem;
+        padding-bottom: 1rem;
+      "
+    >
       <input
         type="text"
         class="input-delete"
@@ -51,6 +70,16 @@
         placeholder="Enter event's id"
       />
       <button class="delete-event-btn">Delete event</button>
+    </div>
+    <div class="natural-language">
+      <textarea
+        class="input-natural"
+        name="natural"
+        placeholder="Enter natural language"
+      ></textarea>
+      <button class="natural-language-btn">Add event</button>
+    </div>
+    <p class="output-container"></p>
     <script src="index.js"></script>
   </body>
 </html>
