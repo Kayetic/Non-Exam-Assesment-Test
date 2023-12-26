@@ -73,4 +73,9 @@ body {
 .delete-icon {
   font-size: 1rem;
   cursor: pointer;
+}
+
+.previous-month,
+.next-month {
+  cursor: pointer;
 }/*# sourceMappingURL=index.css.map */
