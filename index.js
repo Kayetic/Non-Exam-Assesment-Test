@@ -5,6 +5,31 @@ function getFormattedMonth(month) {
   return month.length === 1 ? `0${month}` : month;
 }
 
+let openAIKey = "";
+
+async function fetchOpenAIKey() {
+  try {
+    const response = await fetch(
+      `https://oh3uau67qoyk7juqhwo75ivyta0hhhcy.lambda-url.eu-west-2.on.aws/`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } else {
+      const responseData = await response.json();
+      console.log("Received OpenAI API key:", responseData);
+      openAIKey = responseData.key;
+    }
+  } catch (error) {
+    console.error("Error fetching key:", error);
+  }
+}
+
+fetchOpenAIKey();
+
 async function fetchEvents(year, month) {
   const formattedMonth = getFormattedMonth(month.toString());
   try {
@@ -79,7 +104,6 @@ const createEventDivs = function (eventsFound = true) {
         `;
     eventElement.appendChild(deleteIcon);
     eventContainer.appendChild(eventElement);
-    console.log(eventName);
     count++;
   }
 };
@@ -112,7 +136,6 @@ nextMonthArrow.addEventListener("click", function () {
   updateDatePicker(selectedYear, selectedMonth);
   fetchEvents(selectedYear, selectedMonth);
   clearEventsScreen();
-  console.log(selectedMonth);
 });
 
 previousMonthArrow.addEventListener("click", function () {
@@ -295,7 +318,7 @@ const sendToOpenAI = function (textToParse) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAI_API_KEY}`, // Ensure this is securely handled
+      Authorization: `Bearer ${openAIKey}`, // Ensure this is securely handled
     },
     body: JSON.stringify(data),
   })
